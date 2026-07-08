@@ -39,62 +39,28 @@ img{
 <div id="content"></div>
 
 <script>
+const content = document.getElementById("content");
 
-// CENTRAL TIME (America/Chicago)
+// Current time in Central Time
 const now = new Date();
+const centralNow = new Date(
+  now.toLocaleString("en-US", { timeZone: "America/Chicago" })
+);
 
-const formatter = new Intl.DateTimeFormat('en-US', {
-    timeZone: 'America/Chicago',
-    year:'numeric',
-    month:'numeric',
-    day:'numeric',
-    hour:'numeric',
-    minute:'numeric',
-    second:'numeric',
-    hour12:false
-});
+// Event window (2026)
+const start = new Date("2026-07-10T22:00:00");
+const end   = new Date("2026-07-11T04:00:00");
 
-const parts = formatter.formatToParts(now);
-
-const get = t => parts.find(p=>p.type===t).value;
-
-const year = Number(get('year'));
-const month = Number(get('month'));
-const day = Number(get('day'));
-const hour = Number(get('hour'));
-const minute = Number(get('minute'));
-
-const content=document.getElementById("content");
-
-// ===== CHANGE THESE DATES FOR YOUR EVENT =====
-// Friday July 10 after 10PM until Saturday July 11 4AM
-
-let showFlyer=false;
-
-if(month===7){
-
-// Friday July 10 after 22:00
-if(day===10 && (hour>=22)){
-showFlyer=true;
+if (centralNow < start) {
+  content.innerHTML =
+    '<div class="message">Website Not Available</div>';
+} else if (centralNow >= start && centralNow < end) {
+  content.innerHTML =
+    '<img src="flyer.jpg" alt="Flyer">';
+} else {
+  content.innerHTML =
+    '<div class="message">Website Has Expired</div>';
 }
-
-// Saturday July 11 before 4AM
-if(day===11 && hour<4){
-showFlyer=true;
-}
-
-}
-
-if(showFlyer){
-
-content.innerHTML='<img src="flyer.jpg">';
-
-}else{
-
-content.innerHTML='<div class="message">Website Has Expired</div>';
-
-}
-
 </script>
 
 </body>
