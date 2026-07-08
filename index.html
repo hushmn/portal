@@ -7,16 +7,14 @@
 <title>Website</title>
 
 <style>
-html,body{
+html, body{
     margin:0;
     padding:0;
-    background:#fff;
-    font-family:Arial,Helvetica,sans-serif;
-    display:flex;
-    justify-content:center;
-    align-items:center;
     width:100%;
     height:100%;
+    background:#ffffff;
+    overflow:hidden;
+    font-family:Arial, Helvetica, sans-serif;
 }
 
 #content{
@@ -28,13 +26,13 @@ html,body{
 }
 
 img{
-    max-width:100%;
-    max-height:100%;
+    width:100%;
+    height:100%;
     object-fit:contain;
 }
 
 .message{
-    font-size:34px;
+    font-size:36px;
     font-weight:bold;
     color:#000;
     text-align:center;
@@ -50,36 +48,49 @@ img{
 
 const content = document.getElementById("content");
 
-// ---------- TEST MODE ----------
+// -------------------------
+// TEST MODE
+// -------------------------
+// Add one of these to the end of your URL:
+//
+// ?test=active
+// ?test=before
+// ?test=expired
+//
+// Example:
+// https://hushmn.github.io/portal/?test=active
+// -------------------------
+
 const params = new URLSearchParams(window.location.search);
 const test = params.get("test");
 
-if(test==="active"){
+if(test === "active"){
     showFlyer();
 }
-else if(test==="before"){
+else if(test === "before"){
     showBefore();
 }
-else if(test==="expired"){
+else if(test === "expired"){
     showExpired();
 }
 else{
+    runLiveMode();
+}
 
-    // ---------- LIVE MODE ----------
-
-    const now = new Date();
+function runLiveMode(){
 
     // Current time in Central Time
+    const now = new Date();
+
     const centralNow = new Date(
-        now.toLocaleString("en-US",{timeZone:"America/Chicago"})
+        now.toLocaleString("en-US", {
+            timeZone: "America/Chicago"
+        })
     );
 
-    // EVENT WINDOW
-    // Friday July 10 2026 10:00 PM
-    const start = new Date(2026,6,10,22,0,0);
-
-    // Saturday July 11 2026 4:00 AM
-    const end = new Date(2026,6,11,4,0,0);
+    // Event window
+    const start = new Date(2026, 6, 10, 22, 0, 0); // July 10, 10 PM
+    const end   = new Date(2026, 6, 11, 4, 0, 0);  // July 11, 4 AM
 
     if(centralNow < start){
         showBefore();
@@ -94,15 +105,25 @@ else{
 }
 
 function showFlyer(){
-    content.innerHTML='<img src="flyer.jpg" alt="Flyer">';
+    content.innerHTML = `
+        <img src="flyer.png" alt="Flyer">
+    `;
 }
 
 function showBefore(){
-    content.innerHTML='<div class="message">Website Not Available</div>';
+    content.innerHTML = `
+        <div class="message">
+            Website Not Available
+        </div>
+    `;
 }
 
 function showExpired(){
-    content.innerHTML='<div class="message">Website Has Expired</div>';
+    content.innerHTML = `
+        <div class="message">
+            Website Has Expired
+        </div>
+    `;
 }
 
 </script>
