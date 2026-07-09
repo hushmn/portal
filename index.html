@@ -7,36 +7,33 @@
 <title>Website</title>
 
 <style>
-html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    background: #ffffff;
-    overflow: hidden;
-    font-family: Arial, Helvetica, sans-serif;
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    background:#fff;
+    font-family:Arial,Helvetica,sans-serif;
 }
 
-#content {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+#content{
+    width:100%;
+    height:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
 }
 
-img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
+img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
 }
 
-.message {
-    font-size: 36px;
-    font-weight: bold;
-    text-align: center;
-    color: #000;
-    padding: 30px;
+.message{
+    font-size:38px;
+    font-weight:bold;
+    text-align:center;
+    padding:30px;
 }
 </style>
 </head>
@@ -47,10 +44,9 @@ img {
 
 <script>
 
-// ----------------------
+// ------------------------------------
 // TEST MODE
-// ----------------------
-// Add one of these:
+// ------------------------------------
 //
 // ?test=active
 // ?test=before
@@ -58,70 +54,129 @@ img {
 //
 // Example:
 // https://hushmn.github.io/portal/?test=active
-// ----------------------
-
-const content = document.getElementById("content");
+//
+// ------------------------------------
 
 const params = new URLSearchParams(window.location.search);
 const test = params.get("test");
 
-if (test === "active") {
+const content = document.getElementById("content");
+
+if(test==="active"){
     showFlyer();
-} else if (test === "before") {
+}
+else if(test==="before"){
     showBefore();
-} else if (test === "expired") {
+}
+else if(test==="expired"){
     showExpired();
-} else {
+}
+else{
     runLiveMode();
 }
 
-function runLiveMode() {
+// Refresh automatically every minute
+setInterval(runLiveMode,60000);
 
-    // Current time in Chicago
-    const now = new Date();
+function runLiveMode(){
 
-    const chicago = new Date(
-        now.toLocaleString("en-US", {
-            timeZone: "America/Chicago"
-        })
-    );
+    // Current date/time in Chicago
+    const formatter = new Intl.DateTimeFormat("en-US",{
+        timeZone:"America/Chicago",
+        year:"numeric",
+        month:"numeric",
+        day:"numeric",
+        hour:"numeric",
+        minute:"numeric",
+        second:"numeric",
+        hour12:false
+    });
 
-    // Event Window
-    const start = new Date(2026, 6, 10, 22, 0, 0); // July 10 10PM
-    const end   = new Date(2026, 6, 11, 4, 0, 0);  // July 11 4AM
+    const parts = formatter.formatToParts(new Date());
 
-    if (chicago < start) {
-        showBefore();
+    const values={};
+
+    parts.forEach(p=>{
+        if(p.type!=="literal"){
+            values[p.type]=parseInt(p.value);
+        }
+    });
+
+    const year=values.year;
+    const month=values.month;
+    const day=values.day;
+    const hour=values.hour;
+
+    let active=false;
+
+    // Friday July 10 2026 after 10PM
+    if(
+        year===2026 &&
+        month===7 &&
+        day===10 &&
+        hour>=22
+    ){
+        active=true;
     }
-    else if (chicago >= start && chicago < end) {
+
+    // Saturday July 11 2026 before 4AM
+    if(
+        year===2026 &&
+        month===7 &&
+        day===11 &&
+        hour<4
+    ){
+        active=true;
+    }
+
+    if(active){
         showFlyer();
     }
-    else {
-        showExpired();
+    else{
+
+        // Before event
+        if(
+            year<2026 ||
+            (year===2026 && month<7) ||
+            (year===2026 && month===7 && day<10) ||
+            (year===2026 && month===7 && day===10 && hour<22)
+        ){
+            showBefore();
+        }
+        else{
+            showExpired();
+        }
+
     }
 
 }
 
-function showFlyer() {
-    content.innerHTML = `
+function showFlyer(){
+
+    content.innerHTML=`
         <img src="flyer.PNG" alt="Flyer">
     `;
+
 }
 
-function showBefore() {
-    content.innerHTML = `
+function showBefore(){
+
+    content.innerHTML=`
         <div class="message">
             Website Not Available
         </div>
     `;
+
 }
 
-function showExpired() {
-    content.innerHTML = `
+function showExpired(){
+
+    content.innerHTML=`
         <div class="message">
             Website Has Expired
         </div>
     `;
+
 }
 
 </script>
